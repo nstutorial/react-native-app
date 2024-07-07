@@ -136,8 +136,9 @@ const LoanDisburseForm = () => {
       />
       <InputBox
         placeholder="Phone No"
-        inputmode="numeric"
-        
+        //maxLength='10'
+        //inputmode="numeric"
+         //keyboardType="phone-pad"
         value={phone}
         onChangeText={(newEntry) => setPhone(newEntry)}
       />
@@ -149,7 +150,8 @@ const LoanDisburseForm = () => {
       />
         <InputBox
         placeholder="Total Disbursement Amount"
-        inputmode="email"
+        //inputmode="numeric"
+         keyboardType="numeric"
         value={totaldisburseamount}
         onChangeText={(newEntry) => setTotaldisburseamount(newEntry)}
       />
@@ -162,24 +164,28 @@ const LoanDisburseForm = () => {
        <InputBox
         placeholder="Advance Amount"
         //inputmode="email"
+         keyboardType="numeric"
         value={advance}
         onChangeText={(newEntry) => setAdvance(newEntry)}
       />
        <InputBox
         placeholder="Loan Amount"
         //inputmode="email"
+         keyboardType="numeric"
         value={lamount}
         onChangeText={(newEntry) => setLamount(newEntry)}
       />
        <InputBox
         placeholder="No. of EMI"
        // inputmode="email"
+        keyboardType="numeric"
         value={emino}
         onChangeText={(newEntry) => setEmino(newEntry)}
       />
       <InputBox
         placeholder="Actuual EMI Amount"
-        //inputmode="email"
+        inputmode="number"
+        keyboardType="numeric"
         value={actualemi}
         onChangeText={(newEntry) => setActualemi(newEntry)}
         //formula Loan Amount/No of EMI
@@ -193,11 +199,12 @@ const LoanDisburseForm = () => {
       />
       <InputBox
         placeholder="Center Day"
-        inputmode="email"
+        //inputmode="email"
         value={centerday}
         onChangeText={(newEntry) => setCenterday(newEntry)}
         //auto from date
       />
+      <Text>Loan Balance :</Text>
       <FormButton onPress={handleRegistration} text="SUBMIT" />
       
       </ScrollView>
@@ -211,7 +218,7 @@ export default LoanDisburseForm;
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    paddingTop: 70,
+    paddingTop: 0,
   },
   image: {
     height: 100, //160

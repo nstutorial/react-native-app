@@ -9,14 +9,15 @@ const InputBox = ({
     onChangeText,
     secureTextEntry,
     value ,
-    
+    keyboardType,
+    maxLength
  }) => {
     return (
         <View style={styles.inputView}>
             <TextInput style={styles.input} placeholder={placeholder}  autoCorrect={autoCorrect}
                 autoCapitalize={autoCapitalize} inputmode ={inputmode }
                 onChangeText={onChangeText} secureTextEntry ={secureTextEntry }
-                value={value}
+                value={value} keyboardType={keyboardType} 
                 />
 
         </View>
