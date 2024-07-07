@@ -1,21 +1,17 @@
 import React, { useState } from "react";
 import {
   Alert,
-  Button,
   Image,
-  Pressable,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
-  Switch,
   Text,
-  TextInput,
   View,
 } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import InputBox from "../components/FormsComponents/InputBox";
 import FormButton from "../components/FormsComponents/Button";
 import { useNavigation } from "@react-navigation/native";
-
 
 import { database } from "../firebaseConfig";
 import { ref, set } from "firebase/database";
@@ -26,7 +22,6 @@ const data = [
   { label: "BM/ABM", value: "bm" },
   { label: "Field Officer", value: "fo" },
   { label: "customer", value: "customer" },
- 
 ];
 
 const UserRegisterForm = () => {
@@ -39,16 +34,14 @@ const UserRegisterForm = () => {
 
   //dropdown
   const [value, setValue] = useState(null);
-  
 
   const handleRegistration = async () => {
     if (!name || !phone || !username || !password) {
       Alert.alert("Error", "All fields are required.");
-      console.log("Error : All fields are required");
+      console.log("Error: All fields are required");
       return;
     }
     try {
-      //console.log({ name, phone, username, password });
       await set(ref(database, "users/" + phone), {
         name: name,
         phone: phone,
@@ -68,54 +61,56 @@ const UserRegisterForm = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Image source={logo} style={styles.image} resizeMode="contain" />
-      <Text style={styles.title}>Registration</Text>
-      <InputBox
-        placeholder="Full name"
-        inputmode="name"
-        value={name}
-        onChangeText={(newEntry) => setName(newEntry)}
-      />
-      <InputBox
-        placeholder="Mobile No"
-        inputmode="numeric"
-        value={phone}
-        onChangeText={(newEntry) => setPhone(newEntry)}
-      />
-      <Dropdown
-        style={styles.dropdownView}
-        data={data}
-        search
-        labelField="label"
-        valueField="value"
-        placeholder="Select Role"
-        searchPlaceholder="Search..."
-      />
-      <InputBox
-        placeholder="UserName Or Email"
-        inputmode="email"
-        value={username}
-        onChangeText={(newEntry) => setUsername(newEntry)}
-      />
-      <InputBox
-        placeholder="Password"
-        secureTextEntry
-        onChangeText={(newEntry) => setPassword(newEntry)}
-      />
-      <FormButton onPress={handleRegistration} text="REGISTER" />
-      <Text style={styles.footerText}>
-        Already Have Account?
-        <Text
-          style={styles.signup}
-          onPress={() => {
-            navigation.replace("Login");
-          }}
-        >
-          {" "}
-          Login
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <Image source={logo} style={styles.image} resizeMode="contain" />
+        <Text style={styles.title}>Registration</Text>
+        <InputBox
+          placeholder="Full name"
+          inputmode="name"
+          value={name}
+          onChangeText={(newEntry) => setName(newEntry)}
+        />
+        <InputBox
+          placeholder="Mobile No"
+          inputmode="numeric"
+          value={phone}
+          onChangeText={(newEntry) => setPhone(newEntry)}
+        />
+        <Dropdown
+          style={styles.dropdownView}
+          data={data}
+          search
+          labelField="label"
+          valueField="value"
+          placeholder="Select Role"
+          searchPlaceholder="Search..."
+        />
+        <InputBox
+          placeholder="UserName Or Email"
+          inputmode="email"
+          value={username}
+          onChangeText={(newEntry) => setUsername(newEntry)}
+        />
+        <InputBox
+          placeholder="Password"
+          secureTextEntry
+          onChangeText={(newEntry) => setPassword(newEntry)}
+        />
+        <FormButton onPress={handleRegistration} text="REGISTER" />
+        <Text style={styles.footerText}>
+          Already Have Account?
+          <Text
+            style={styles.signup}
+            onPress={() => {
+              navigation.replace("Login");
+            }}
+          >
+            {" "}
+            Login
+          </Text>
         </Text>
-      </Text>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -123,12 +118,16 @@ const UserRegisterForm = () => {
 export default UserRegisterForm;
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+  },
   container: {
     alignItems: "center",
     paddingTop: 70,
+    paddingBottom: 20,
   },
   image: {
-    height: 100, //160
+    height: 100,
     width: 170,
   },
   title: {
@@ -147,15 +146,13 @@ const styles = StyleSheet.create({
     color: "red",
     fontSize: 13,
   },
-  dropdownView : {
-    height : 50,
-    width:'90%',
-    paddingHorizontal : 20,
-    marginLeft:80,
-    marginRight:80,
-    borderColor : "red",
-    borderWidth : 1,
+  dropdownView: {
+    height: 50,
+    width: "90%",
+    paddingHorizontal: 20,
+    borderColor: "red",
+    borderWidth: 1,
     borderRadius: 7,
-    marginBottom:5
+    marginBottom: 5,
   },
 });

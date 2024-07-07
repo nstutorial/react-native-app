@@ -3,21 +3,21 @@ import {
   View,
   Text,
   TextInput,
-  Button,
   StyleSheet,
   FlatList,
   Pressable,
 } from "react-native";
 
 import { database } from "../firebaseConfig";
-import { ref, set, onValue } from "firebase/database";
+import { ref, onValue } from "firebase/database";
 import EMIFormModal from "./Modal/emicollection";
 
 const InstallmentCollection = () => {
   const [data, setData] = useState([]);
   const [search, setSearch] = useState("");
   const [filterBy, setFilterBy] = useState("Member_Name"); // Default filter by Member Name
-  const [modalVisible,setModalVisible]=useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedName, setSelectedName] = useState(""); // State to hold the selected name
 
   useEffect(() => {
     const dataRef = ref(database, "disbursement_data"); // Path to your data in Firebase
@@ -35,7 +35,8 @@ const InstallmentCollection = () => {
 
   const handleCollectEMI = (item) => {
     // Implement EMI collection logic here
-    setModalVisible(true)
+    setSelectedName(item.Member_Name); // Set the selected name
+    setModalVisible(true);
     //alert(`Collecting EMI for ${item.Member_Name}`);
   };
 
@@ -85,18 +86,18 @@ const InstallmentCollection = () => {
       <Text style={styles.cardText}>
         <Text style={styles.cardLabel}>Center Day:</Text> {item.Center_Day}
       </Text>
+      <Text style={styles.cardText}>
+        <Text style={styles.cardLabel}>Loan Outstanding:</Text>{" "}
+        {item.Center_Day}
+      </Text>
       <View>
-      <Pressable style={styles.button} onPress={() => handleCollectEMI(item)}>
-        <Text style={styles.buttonText}>Collect EMI</Text>
-      </Pressable>
-      <EMIFormModal
-      modalVisible={modalVisible}
-      setModalVisible={setModalVisible}
-      />
+        <Pressable style={styles.button} onPress={() => handleCollectEMI(item)}>
+          <Text style={styles.buttonText}>Collect EMI</Text>
+        </Pressable>
       </View>
-      
     </View>
   );
+
   const filterData = (data) => {
     return data.filter((item) => {
       if (filterBy === "Member_Name") {
@@ -109,6 +110,7 @@ const InstallmentCollection = () => {
       return true;
     });
   };
+
   return (
     <View style={styles.container}>
       <TextInput
@@ -146,25 +148,16 @@ const InstallmentCollection = () => {
           <Text style={styles.filterButtonText}>By Phone</Text>
         </Pressable>
       </View>
-      {/* <Button
-        title="Search"
-        onPress={() => setFilterBy('Member_Name')}
-        // onPress={() => {
-        //   // Implement search functionality here
-        // }}
-        
-      />
-      {/* <FlatList
-        data={data.filter(item => item.Member_Name.includes(search))}
-        renderItem={renderCard}
-        keyExtractor={(item) => item.id}
-        style={styles.cardContainer}
-      /> */}
       <FlatList
         data={filterData(data)}
         renderItem={renderCard}
         keyExtractor={(item) => item.id}
         style={styles.cardContainer}
+      />
+      <EMIFormModal
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        name={selectedName} // Pass the selected name to the modal
       />
     </View>
   );

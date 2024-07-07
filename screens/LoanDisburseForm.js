@@ -1,22 +1,17 @@
 import React, { useState } from "react";
 import {
   Alert,
-  Button,
   Image,
-  Pressable,
   SafeAreaView,
   ScrollView,
   StyleSheet,
-  Switch,
   Text,
-  TextInput,
   View,
 } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import InputBox from "../components/FormsComponents/InputBox";
 import FormButton from "../components/FormsComponents/Button";
 import { useNavigation } from "@react-navigation/native";
-
 
 import { database } from "../firebaseConfig";
 import { ref, set } from "firebase/database";
@@ -27,14 +22,13 @@ const data = [
   { label: "Boxirhat", value: "Boxirhat" },
   { label: "Tufanganj", value: "Tufanganj" },
   { label: "Nigamnagar", value: "Nigamnagar" },
- 
 ];
+
 const data1 = [
   { label: "Anadaranfulbari-A", value: "Kumargram" },
   { label: "Boxirhat", value: "Boxirhat" },
   { label: "Tufanganj", value: "Tufanganj" },
   { label: "Nigamnagar", value: "Nigamnagar" },
- 
 ];
 
 const LoanDisburseForm = () => {
@@ -55,22 +49,27 @@ const LoanDisburseForm = () => {
 
   const navigation = useNavigation();
 
-  //dropdown
-  const [value, setValue] = useState(null);
-  
-
   const handleRegistration = async () => {
-
-    if (!branch || !center || !name || !product ||!totaldisburseamount ||!processingFee ||!advance ||!lamount ||!emino ||!actualemi ||!emistartdate ||!centerday) {
+    if (
+      !branch ||
+      !center ||
+      !name ||
+      !product ||
+      !totaldisburseamount ||
+      !processingFee ||
+      !advance ||
+      !lamount ||
+      !emino ||
+      !actualemi ||
+      !emistartdate ||
+      !centerday
+    ) {
       Alert.alert("Error", "All fields are required.");
       console.log("Error : All fields are required");
       return;
     }
-    
-      // console.log({ branch, center, name, phone,product,totaldisburseamount,processingFee,advance,lamount,emino,actualemi,emistartdate,centerday });
 
     try {
-     
       await set(ref(database, "disbursement_data/" + phone), {
         Branch_Name: branch,
         Center_Name: center,
@@ -84,14 +83,23 @@ const LoanDisburseForm = () => {
         No_of_EMI: emino,
         Actual_EMI_Amount: actualemi,
         EMI_Start_Date: emistartdate,
-        Center_Day:centerday,
+        Center_Day: centerday,
       });
       console.log("New User Created Successfully");
       Alert.alert("Success", "User registration done");
+      setBranch("");
+      setCenter("");
       setName("");
-       setPhone("");
-      // setUsername("");
-      // setPassword("");
+      setPhone("");
+      setProduct("");
+      setTotaldisburseamount("");
+      setProccessingFee("");
+      setAdvance("");
+      setLamount("");
+      setEmino("");
+      setActualemi("");
+      setEmistartdate("");
+      setCenterday("");
     } catch (error) {
       console.error("Error creating user: ", error);
       Alert.alert("Error", "There was an error during registration.");
@@ -99,116 +107,112 @@ const LoanDisburseForm = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView>
-      <Image source={logo} style={styles.image} resizeMode="contain" />
-      <Text style={styles.title}>Disbursement Form</Text>
-    
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.container}>
+          <Image source={logo} style={styles.image} resizeMode="contain" />
+          <Text style={styles.title}>Disbursement Form</Text>
 
-       <Dropdown
-        style={styles.dropdownView}
-        data={data}
-        search
-        labelField="label"
-        valueField="value"
-        placeholder="Branch Name"
-        searchPlaceholder="Search..."
-        value={branch}
-        onChange={item=>{setBranch(item.value)}}
-      />
+          <Dropdown
+            style={styles.dropdownView}
+            data={data}
+            search
+            labelField="label"
+            valueField="value"
+            placeholder="Branch Name"
+            searchPlaceholder="Search..."
+            value={branch}
+            onChange={(item) => {
+              setBranch(item.value);
+            }}
+          />
 
-      <Dropdown
-        style={styles.dropdownView}
-        data={data1}
-        search
-        labelField="label"
-        valueField="value"
-        placeholder="Center Name"
-        searchPlaceholder="Search..."
-        value={center}
-        onChange={item=>{setCenter(item.value)}}
-      />
-        <InputBox
-        placeholder="Member Name"
-        inputmode="name"
-        value={name}
-        onChangeText={(newEntry) => setName(newEntry)}
-      />
-      <InputBox
-        placeholder="Phone No"
-        //maxLength='10'
-        //inputmode="numeric"
-         //keyboardType="phone-pad"
-        value={phone}
-        onChangeText={(newEntry) => setPhone(newEntry)}
-      />
-      <InputBox
-        placeholder="Product Name"
-       
-        value={product}
-        onChangeText={(newEntry) => setProduct(newEntry)}
-      />
-        <InputBox
-        placeholder="Total Disbursement Amount"
-        //inputmode="numeric"
-         keyboardType="numeric"
-        value={totaldisburseamount}
-        onChangeText={(newEntry) => setTotaldisburseamount(newEntry)}
-      />
-       <InputBox
-        placeholder="Processing Fee"
-        //inputmode="email"
-        value={processingFee}
-        onChangeText={(newEntry) => setProccessingFee(newEntry)}
-      />
-       <InputBox
-        placeholder="Advance Amount"
-        //inputmode="email"
-         keyboardType="numeric"
-        value={advance}
-        onChangeText={(newEntry) => setAdvance(newEntry)}
-      />
-       <InputBox
-        placeholder="Loan Amount"
-        //inputmode="email"
-         keyboardType="numeric"
-        value={lamount}
-        onChangeText={(newEntry) => setLamount(newEntry)}
-      />
-       <InputBox
-        placeholder="No. of EMI"
-       // inputmode="email"
-        keyboardType="numeric"
-        value={emino}
-        onChangeText={(newEntry) => setEmino(newEntry)}
-      />
-      <InputBox
-        placeholder="Actuual EMI Amount"
-        inputmode="number"
-        keyboardType="numeric"
-        value={actualemi}
-        onChangeText={(newEntry) => setActualemi(newEntry)}
-        //formula Loan Amount/No of EMI
-      />
-      <InputBox
-        placeholder="EMI Start Date"
-        //inputmode="email"
-        value={emistartdate}
-        onChangeText={(newEntry) => setEmistartdate(newEntry)}
-        //formula Loan Amount/No of EMI
-      />
-      <InputBox
-        placeholder="Center Day"
-        //inputmode="email"
-        value={centerday}
-        onChangeText={(newEntry) => setCenterday(newEntry)}
-        //auto from date
-      />
-      <Text>Loan Balance :</Text>
-      <FormButton onPress={handleRegistration} text="SUBMIT" />
-      
+          <Dropdown
+            style={styles.dropdownView}
+            data={data1}
+            search
+            labelField="label"
+            valueField="value"
+            placeholder="Center Name"
+            searchPlaceholder="Search..."
+            value={center}
+            onChange={(item) => {
+              setCenter(item.value);
+            }}
+          />
+
+          <InputBox
+            placeholder="Member Name"
+            inputmode="name"
+            value={name}
+            onChangeText={(newEntry) => setName(newEntry)}
+          />
+          <InputBox
+            placeholder="Phone No"
+            inputMode="phone-pad"
+            value={phone}
+            onChangeText={(newEntry) => setPhone(newEntry)}
+          />
+          <InputBox
+            placeholder="Product Name"
+            value={product}
+            onChangeText={(newEntry) => setProduct(newEntry)}
+          />
+          <InputBox
+            placeholder="Total Disbursement Amount"
+            inputMode="numeric"
+            // keyboardType="numeric"
+            value={totaldisburseamount}
+            onChangeText={(newEntry) => setTotaldisburseamount(newEntry)}
+          />
+          <InputBox
+            placeholder="Processing Fee"
+            inputMode="numeric"
+            value={processingFee}
+            onChangeText={(newEntry) => setProccessingFee(newEntry)}
+          />
+          <InputBox
+            placeholder="Advance Amount"
+            inputMode="numeric"
+            // keyboardType="numeric"
+            value={advance}
+            onChangeText={(newEntry) => setAdvance(newEntry)}
+          />
+          <InputBox
+            placeholder="Loan Amount"
+            //keyboardType="numeric"
+            inputMode="numeric"
+            value={lamount}
+            onChangeText={(newEntry) => setLamount(newEntry)}
+          />
+          <InputBox
+            placeholder="No. of EMI"
+            inputMode="numeric"
+            //keyboardType="numeric"
+            value={emino}
+            onChangeText={(newEntry) => setEmino(newEntry)}
+          />
+          <InputBox
+            placeholder="Actual EMI Amount"
+            inputMode="numeric"
+            //keyboardType="numeric"
+            value={actualemi}
+            onChangeText={(newEntry) => setActualemi(newEntry)}
+          />
+          <InputBox
+            placeholder="EMI Start Date"
+            value={emistartdate}
+            onChangeText={(newEntry) => setEmistartdate(newEntry)}
+          />
+          <InputBox
+            placeholder="Center Day"
+            value={centerday}
+            onChangeText={(newEntry) => setCenterday(newEntry)}
+          />
+          <Text>Loan Balance :</Text>
+          <FormButton onPress={handleRegistration} text="SUBMIT" />
+        </View>
       </ScrollView>
-      
     </SafeAreaView>
   );
 };
@@ -216,12 +220,21 @@ const LoanDisburseForm = () => {
 export default LoanDisburseForm;
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
+    flex: 1,
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: "center",
     alignItems: "center",
-    paddingTop: 0,
+    paddingVertical: 20,
+  },
+  container: {
+    width: "90%",
+    alignItems: "center",
   },
   image: {
-    height: 100, //160
+    height: 100,
     width: 170,
   },
   title: {
@@ -240,13 +253,13 @@ const styles = StyleSheet.create({
     color: "red",
     fontSize: 13,
   },
-  dropdownView : {
-    height : 50,
-     width:'100%',
-    paddingHorizontal : 40,    
-    borderColor : "red",
-    borderWidth : 1,
+  dropdownView: {
+    height: 50,
+    width: "100%",
+    paddingHorizontal: 20,
+    borderColor: "red",
+    borderWidth: 1,
     borderRadius: 7,
-    marginBottom:5
+    marginBottom: 5,
   },
 });
