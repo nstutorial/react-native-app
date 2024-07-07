@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 import {
+  Alert,
   Image,
   SafeAreaView,
   StyleSheet,
   Text,
-  TextInput,
   View,
-  Alert,
 } from "react-native";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { ref, get } from "firebase/database";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { auth, database } from "../firebaseConfig";
 import InputBox from "../components/FormsComponents/InputBox";
 import FormButton from "../components/FormsComponents/Button";
 import { useNavigation } from "@react-navigation/native";
@@ -19,47 +22,72 @@ const UserLoginForm = () => {
   const [password, setPassword] = useState("");
   const navigation = useNavigation();
 
-  const handleLogin = () => {
-    // Replace with your actual login validation logic
+  // Function to fetch user role from the database
+  const fetchUserRole = async (uid) => {
+    const userRef = ref(database, "users/" + uid);
+    const snapshot = await get(userRef);
+    if (snapshot.exists()) {
+      return snapshot.val().role;
+    } else {
+      return null;
+    }
+  };
+
+  const handleLogin = async () => {
     if (username && password) {
-      console.log({ username, password });
-      navigation.navigate("Tabs");
+      try {
+        const userCredential = await signInWithEmailAndPassword(
+          auth,
+          username,
+          password
+        );
+        const user = userCredential.user;
+
+        // Fetch user role
+        const role = await fetchUserRole(user.uid);
+
+        // Store user role in AsyncStorage
+        await AsyncStorage.setItem("userRole", role);
+
+        console.log("User signed in successfully");
+        navigation.navigate("Tabs");
+      } catch (error) {
+        Alert.alert("Error", error.message);
+      }
     } else {
       Alert.alert("Error", "Please enter both username and password");
     }
   };
 
   return (
-    <View>
-      <SafeAreaView style={styles.container}>
-        <Image source={logo} style={styles.image} resizeMode="contain" />
-        <Text style={styles.title}>Login</Text>
-        <InputBox
-          placeholder="UserName Or Email"
-          inputmode="email"
-          value={username}
-          onChangeText={(newEntry) => setUsername(newEntry)}
-        />
-        <InputBox
-          placeholder="Password"
-          secureTextEntry
-          value={password}
-          onChangeText={(newEntry) => setPassword(newEntry)}
-        />
-        <FormButton onPress={handleLogin} text="LOGIN" />
-        <Text style={styles.footerText}>
-          Don't Have an Account?
-          <Text
-            style={styles.signup}
-            onPress={() => {
-              navigation.navigate("RegistrationForm");
-            }}
-          >
-            Sign Up
-          </Text>
+    <SafeAreaView style={styles.container}>
+      <Image source={logo} style={styles.image} resizeMode="contain" />
+      <Text style={styles.title}>Login</Text>
+      <InputBox
+        placeholder="UserName Or Email"
+        inputmode="email"
+        value={username}
+        onChangeText={(newEntry) => setUsername(newEntry)}
+      />
+      <InputBox
+        placeholder="Password"
+        secureTextEntry
+        value={password}
+        onChangeText={(newEntry) => setPassword(newEntry)}
+      />
+      <FormButton onPress={handleLogin} text="LOGIN" />
+      <Text style={styles.footerText}>
+        Don't Have an Account?
+        <Text
+          style={styles.signup}
+          onPress={() => {
+            navigation.navigate("RegistrationForm");
+          }}
+        >
+          Sign Up
         </Text>
-      </SafeAreaView>
-    </View>
+      </Text>
+    </SafeAreaView>
   );
 };
 

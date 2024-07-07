@@ -12,16 +12,17 @@ import { Dropdown } from "react-native-element-dropdown";
 import InputBox from "../components/FormsComponents/InputBox";
 import FormButton from "../components/FormsComponents/Button";
 import { useNavigation } from "@react-navigation/native";
-
-import { database } from "../firebaseConfig";
+import { database, auth } from "../firebaseConfig";
 import { ref, set } from "firebase/database";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+
 const logo = require("../assets/logo.png");
 
 const data = [
   { label: "Admin", value: "admin" },
   { label: "BM/ABM", value: "bm" },
   { label: "Field Officer", value: "fo" },
-  { label: "customer", value: "customer" },
+  { label: "Customer", value: "customer" },
 ];
 
 const UserRegisterForm = () => {
@@ -30,30 +31,36 @@ const UserRegisterForm = () => {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [role, setRole] = useState(null);
   const navigation = useNavigation();
 
-  //dropdown
-  const [value, setValue] = useState(null);
-
   const handleRegistration = async () => {
-    if (!name || !phone || !username || !password) {
+    if (!name || !phone || !username || !password || !role) {
       Alert.alert("Error", "All fields are required.");
-      console.log("Error: All fields are required");
       return;
     }
+
     try {
-      await set(ref(database, "users/" + phone), {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        username,
+        password
+      );
+      const user = userCredential.user;
+
+      await set(ref(database, "users/" + user.uid), {
         name: name,
         phone: phone,
+        role: role,
         username: username,
-        password: password,
       });
-      console.log("New User Created Successfully");
-      Alert.alert("Success", "User registration done");
+
+      Alert.alert("Success", "User registration successful");
       setName("");
       setPhone("");
       setUsername("");
       setPassword("");
+      setRole(null);
     } catch (error) {
       console.error("Error creating user: ", error);
       Alert.alert("Error", "There was an error during registration.");
@@ -84,7 +91,8 @@ const UserRegisterForm = () => {
           labelField="label"
           valueField="value"
           placeholder="Select Role"
-          searchPlaceholder="Search..."
+          value={role}
+          onChange={(item) => setRole(item.value)}
         />
         <InputBox
           placeholder="UserName Or Email"
@@ -95,6 +103,7 @@ const UserRegisterForm = () => {
         <InputBox
           placeholder="Password"
           secureTextEntry
+          value={password}
           onChangeText={(newEntry) => setPassword(newEntry)}
         />
         <FormButton onPress={handleRegistration} text="REGISTER" />

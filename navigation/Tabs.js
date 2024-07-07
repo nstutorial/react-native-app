@@ -1,17 +1,17 @@
-import { View, Text, StyleSheet } from "react-native";
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Profile from "../screens/Profile";
 import LoanDisburseForm from "../screens/LoanDisburseForm";
-import UserRegisterForm from "../screens/UserRegisterForm";
 import InstallmentCollection from "../screens/InstallmentCollection";
-//import { useNavigation } from '@react-navigation/native';
+import UserRegisterForm from "../screens/UserRegisterForm";
+import useUserRole from "../hooks/useUserRole"; // Import the custom hook
 
-//const navigation= useNavigation();
 const Tab = createBottomTabNavigator();
 
 const Tabs = () => {
+  const role = useUserRole(); // Fetch the user role
+
   return (
     <Tab.Navigator
       initialRouteName="Profile"
@@ -35,11 +35,15 @@ const Tabs = () => {
         options={{
           tabBarLabel: "Collection",
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="view-dashboard" color={color} size={size} />
+            <MaterialCommunityIcons
+              name="view-dashboard"
+              color={color}
+              size={size}
+            />
           ),
         }}
       />
-       <Tab.Screen
+      <Tab.Screen
         name="Profile"
         component={Profile}
         options={{
@@ -49,7 +53,22 @@ const Tabs = () => {
           ),
         }}
       />
-
+      {role === "admin" && (
+        <Tab.Screen
+          name="Register"
+          component={UserRegisterForm}
+          options={{
+            tabBarLabel: "Register",
+            tabBarIcon: ({ color, size }) => (
+              <MaterialCommunityIcons
+                name="account-plus"
+                color={color}
+                size={size}
+              />
+            ),
+          }}
+        />
+      )}
     </Tab.Navigator>
   );
 };
