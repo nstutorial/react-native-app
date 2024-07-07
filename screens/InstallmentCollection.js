@@ -11,10 +11,13 @@ import {
 
 import { database } from "../firebaseConfig";
 import { ref, set, onValue } from "firebase/database";
+import EMIFormModal from "./Modal/emicollection";
+
 const InstallmentCollection = () => {
   const [data, setData] = useState([]);
   const [search, setSearch] = useState("");
   const [filterBy, setFilterBy] = useState("Member_Name"); // Default filter by Member Name
+  const [modalVisible,setModalVisible]=useState(false);
 
   useEffect(() => {
     const dataRef = ref(database, "disbursement_data"); // Path to your data in Firebase
@@ -32,7 +35,8 @@ const InstallmentCollection = () => {
 
   const handleCollectEMI = (item) => {
     // Implement EMI collection logic here
-    alert(`Collecting EMI for ${item.Member_Name}`);
+    setModalVisible(true)
+    //alert(`Collecting EMI for ${item.Member_Name}`);
   };
 
   const renderCard = ({ item }) => (
@@ -81,9 +85,16 @@ const InstallmentCollection = () => {
       <Text style={styles.cardText}>
         <Text style={styles.cardLabel}>Center Day:</Text> {item.Center_Day}
       </Text>
+      <View>
       <Pressable style={styles.button} onPress={() => handleCollectEMI(item)}>
         <Text style={styles.buttonText}>Collect EMI</Text>
       </Pressable>
+      <EMIFormModal
+      modalVisible={modalVisible}
+      setModalVisible={setModalVisible}
+      />
+      </View>
+      
     </View>
   );
   const filterData = (data) => {
